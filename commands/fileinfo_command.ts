@@ -1,27 +1,40 @@
-const fs = require("fs")
+import chalk from "chalk"
+import { Command } from "commander"
+import * as fs from "fs"
+import * as path from "path"
 
 class FileInfoCommand {
+  program: Command
 
- program:any
+  constructor(program: Command) {
+    this.program = program
+  }
 
- constructor(program:any){
-  this.program = program
- }
+  register() {
+    this.program
+      .command("fileinfo <filename>")
+      .description("Show detailed information about a file")
+      .action((filename: string) => this.info(filename))
+  }
 
- register(){
-  this.program
-   .command("fileinfo <filename>")
-   .description("Show file information")
-   .action((filename)=>this.info(filename))
- }
+  info(filename: string) {
+    const fullPath = path.resolve(filename)
 
- info(filename){
-  const stats = fs.statSync(filename)
+    if (!fs.existsSync(fullPath)) {
+      console.log(chalk.red(`❌ Error: File "${filename}" not found.`))
+      return
+    }
 
-  console.log("File size:",stats.size)
-  console.log("Created:",stats.birthtime)
- }
+    const stats = fs.statSync(fullPath)
 
+    console.log(chalk.bold.cyan("📄 File Information"))
+    console.log(chalk.white("─────────────────────────────"))
+    console.log(chalk.white(`📁 Path:      ${chalk.yellow(fullPath)}`))
+    console.log(chalk.white(`📦 Size:      ${chalk.yellow(stats.size + " bytes")}`))
+    console.log(chalk.white(`🕒 Created:   ${chalk.yellow(stats.birthtime.toLocaleString())}`))
+    console.log(chalk.white(`✏️  Modified:  ${chalk.yellow(stats.mtime.toLocaleString())}`))
+    console.log(chalk.white(`📂 Is Dir:    ${chalk.yellow(stats.isDirectory() ? "Yes" : "No")}`))
+  }
 }
 
-module.exports = FileInfoCommand
+export = FileInfoCommand

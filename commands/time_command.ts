@@ -1,23 +1,35 @@
-class TimeCommand {
+import chalk from "chalk"
+import { Command, OptionValues } from "commander"
 
-    program:any
-   
-    constructor(program:any){
-     this.program = program
-    }
-   
-    register(){
-     this.program
+class TimeCommand {
+  program: Command
+
+  constructor(program: Command) {
+    this.program = program
+  }
+
+  register() {
+    this.program
       .command("time")
-      .description("Show current time")
-      .action(()=>this.showTime())
+      .description("Show current date and time")
+      .option("-u, --utc", "Show UTC time instead of local time")
+      .action((opts: OptionValues) => this.showTime(opts))
+  }
+
+  showTime(opts: OptionValues) {
+    const now = new Date()
+
+    console.log(chalk.bold.cyan("🕒 Current Date & Time"))
+    console.log(chalk.white("─────────────────────────────"))
+
+    if (opts.utc) {
+      console.log(chalk.white(`🌍 UTC Time:   ${chalk.yellow(now.toUTCString())}`))
+    } else {
+      console.log(chalk.white(`🕐 Time:       ${chalk.yellow(now.toLocaleTimeString())}`))
+      console.log(chalk.white(`📅 Date:       ${chalk.yellow(now.toLocaleDateString())}`))
+      console.log(chalk.white(`📆 Full:       ${chalk.yellow(now.toLocaleString())}`))
     }
-   
-    showTime(){
-     const now = new Date()
-     console.log("Current time:", now.toLocaleTimeString())
-    }
-   
-   }
-   
-   module.exports = TimeCommand
+  }
+}
+
+export = TimeCommand

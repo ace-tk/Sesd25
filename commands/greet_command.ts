@@ -1,21 +1,27 @@
-class GreetCommand{
+import chalk from "chalk"
+import { Command } from "commander"
 
-    program;
-    constructor(program){
+class GreetCommand {
+    program: Command
+
+    constructor(program: Command) {
         this.program = program
     }
 
-    register(){
+    register() {
         this.program
-        .command("greet <name>")
-        .action((name)=>this.greetName(name))
+            .command("greet <name>")
+            .description("Greet someone by name")
+            .action((name: string) => this.greetName(name))
     }
 
-
-    greetName(name){
-        console.log(`Hello ${name}`)
+    greetName(name: string) {
+        if (!name || name.trim() === "") {
+            console.log(chalk.red("❌ Please provide a name."))
+            return
+        }
+        console.log(chalk.green(`👋 Hello, ${chalk.bold(name)}! Welcome to MyCLI!`))
     }
-
 }
 
-module.exports = GreetCommand
+export = GreetCommand

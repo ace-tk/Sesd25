@@ -1,29 +1,34 @@
 import axios from "axios"
+import chalk from "chalk"
+import { Command } from "commander"
 
-class JokeCommand{
+class JokeCommand {
+  program: Command
 
- program:any
+  constructor(program: Command) {
+    this.program = program
+  }
 
- constructor(program){
-  this.program = program
- }
+  register() {
+    this.program
+      .command("joke")
+      .description("Get a random programming joke")
+      .action(() => this.joke())
+  }
 
- register(){
-  this.program
-   .command("joke")
-   .description("Random joke")
-   .action(()=>this.joke())
- }
+  async joke() {
+    try {
+      console.log(chalk.cyan("😂 Fetching a random joke..."))
+      const res = await axios.get("https://official-joke-api.appspot.com/random_joke")
 
- async joke(){
-
-  const res = await axios.get("https://official-joke-api.appspot.com/random_joke")
-
-  console.log(res.data.setup)
-  console.log(res.data.punchline)
-
- }
-
+      console.log(chalk.bold.green("\n🎭 Random Joke"))
+      console.log(chalk.white("─────────────────────────────"))
+      console.log(chalk.white(`❓ ${chalk.yellow(res.data.setup)}`))
+      console.log(chalk.white(`💡 ${chalk.green(res.data.punchline)}`))
+    } catch (err: any) {
+      console.log(chalk.red("❌ Error fetching joke. Check your connection."))
+    }
+  }
 }
 
-module.exports = JokeCommand
+export = JokeCommand

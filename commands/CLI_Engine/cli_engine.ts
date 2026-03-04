@@ -1,25 +1,26 @@
-const {Command} = require("Commander")
+import { Command } from "commander"
 
+class CLI_Engine {
+    program: Command
 
-class CLI_Engine{
-    program;
-    constructor(){
+    constructor() {
         this.program = new Command()
-
+        this.program
+            .name("mycli")
+            .description("A powerful CLI tool built with Node.js & TypeScript")
+            .version("1.0.0")
     }
 
-    registerCommands(commands){
-        commands.forEach((commandClass)=>{
-            const commandInstance = new commandClass(this.program)
+    registerCommands(commands: any[]) {
+        commands.forEach((CommandClass: any) => {
+            const commandInstance = new CommandClass(this.program)
             commandInstance.register()
         })
-
     }
 
-    run(){
-        this.program.parse()
+    run() {
+        this.program.parse(process.argv)
     }
-
 }
 
-module.exports = CLI_Engine
+export = CLI_Engine
